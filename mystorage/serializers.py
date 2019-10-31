@@ -7,7 +7,7 @@ class EssaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Essay
-        fields = ('pk', 'title', 'body', 'author_name')
+        fields = ('pk', 'weather', 'title', 'body', 'author_name')
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ('pk', 'author_name', 'image', 'desc')
+        fields = ('pk', 'weather', 'author_name', 'image', 'desc')
 
 
 class FilesSerializer(serializers.ModelSerializer):
@@ -27,4 +27,4 @@ class FilesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Files
-        fields = ('pk', 'author', 'myfile', 'desc')
+        fields = ('pk', 'weather', 'author', 'myfile', 'desc')

@@ -5,14 +5,22 @@ from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+
+
+class Mypagination(PageNumberPagination):
+    page_size =3
 
 class PostViewSet(viewsets.ModelViewSet):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     queryset = Essay.objects.all()
     serializer_class = EssaySerializer
 
     filter_backends = [SearchFilter]
-    search_fields = ('title', 'body')
+    search_fields = ('title', 'body', 'weather')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -31,11 +39,43 @@ class PostViewSet(viewsets.ModelViewSet):
 class ImgViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+    pagination_class = Mypagination
+
+    filter_backends = [SearchFilter]
+    search_fields = ('image', 'desc', 'weather')
+
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        if self.request.user.is_authenticated:
+            qs = qs.filter(author = self.request.user)
+        else:
+            qs = qs.none()
+        return qs
 
 
 class FileViewSet(viewsets.ModelViewSet):
+
+    permission_classes = [IsAdminUser]
+
     queryset = Files.objects.all()
     serializer_class = FilesSerializer
+    pagination_class = Mypagination
+
+    filter_backends = [SearchFilter]
+    search_fields = ('myfile', 'desc', 'weather')
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        if self.request.user.is_authenticated:
+            qs = qs.filter(author = self.request.user)
+        else:
+            qs = qs.none()
+        return qs
+
+
 
     parser_classes = (MultiPartParser, FormParser)
 
